@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ITSEE Projects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --bg: #F7F8FA;
+      --card: #FFFFFF;
+      --border: #E5E7EB;
+      --text: #111827;
+      --muted: #6B7280;
+      --success: #059669;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -1px rgba(0,0,0,.05);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    /* ── Login ─────────────────────────────────── */
+    #login-view {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #EEF2FF 0%, #F7F8FA 60%);
+    }
+
+    .login-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 40px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(79,70,229,.12);
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .login-logo .icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .login-logo h1 { font-size: 18px; font-weight: 700; }
+    .login-logo p { font-size: 12px; color: var(--muted); }
+
+    .login-box h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .login-box .subtitle { color: var(--muted); margin-bottom: 28px; font-size: 14px; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+
+    input[type="text"], input[type="password"], input[type="url"], input[type="date"],
+    select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: white;
+      transition: border-color .15s;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--bg); color: var(--text); }
+
+    .btn-full { width: 100%; padding: 12px; font-size: 15px; }
+
+    .error-msg {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* ── App ────────────────────────────────────── */
+    #app-view { display: none; }
+
+    header {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      flex: 1;
+    }
+
+    .header-logo .dot {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+    }
+
+    .header-logo span { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 2px; }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: var(--bg);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .btn-logout {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: inherit;
+      padding: 4px;
+    }
+    .btn-logout:hover { color: var(--text); }
+
+    .btn-edit {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: inherit;
+      padding: 4px 6px;
+      border-radius: 6px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .btn-edit:hover { background: var(--bg); color: var(--text); }
+
+    /* ── Toolbar ────────────────────────────────── */
+    .toolbar {
+      max-width: 960px;
+      margin: 24px auto 0;
+      padding: 0 24px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+
+    .search-wrap input {
+      padding-left: 34px;
+    }
+
+    select.filter-select {
+      width: auto;
+      padding: 9px 12px;
+    }
+
+    .stats-bar {
+      max-width: 960px;
+      margin: 12px auto 0;
+      padding: 0 24px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Project List ───────────────────────────── */
+    .project-list {
+      max-width: 960px;
+      margin: 16px auto 40px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .project-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: box-shadow .15s, border-color .15s;
+    }
+
+    .project-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #D1D5DB;
+    }
+
+    /* Vote button */
+    .vote-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 48px;
+      padding: 10px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+
+    .vote-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+
+    .vote-btn.voted {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .vote-btn .arrow {
+      font-size: 16px;
+      line-height: 1;
+      color: var(--muted);
+      transition: color .15s;
+    }
+
+    .vote-btn.voted .arrow,
+    .vote-btn:hover .arrow { color: var(--primary); }
+
+    .vote-btn .count {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .vote-btn .voters-label {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1;
+    }
+
+    /* Card body */
+    .card-body { flex: 1; min-width: 0; }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .project-name {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-status-Completed { background: #DCFCE7; color: #166534; }
+    .badge-status-Assigned  { background: #DBEAFE; color: #1E40AF; }
+    .badge-status-Pending   { background: #F3F4F6; color: #6B7280; }
+    .badge-status-In\ Progress { background: #FEF3C7; color: #92400E; }
+
+    .badge-effort-Low  { background: #DCFCE7; color: #166534; }
+    .badge-effort-Mid  { background: #FEF3C7; color: #92400E; }
+    .badge-effort-High { background: #FEE2E2; color: #991B1B; }
+
+    .project-desc {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .meta-item strong { color: var(--text); font-weight: 500; }
+
+    .priority-dots {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .voter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #EEF2FF;
+      color: #4F46E5;
+    }
+
+    .voter-chip::before { content: '▲'; font-size: 9px; }
+
+    .link-brief {
+      font-size: 12px;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .link-brief:hover { text-decoration: underline; }
+
+    /* ── Completed section ──────────────────────── */
+    .completed-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: none;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      width: 100%;
+      transition: border-color .15s, color .15s;
+    }
+    .completed-toggle:hover { border-color: #9CA3AF; color: var(--text); }
+
+    .completed-toggle .chevron {
+      margin-left: auto;
+      transition: transform .2s;
+      font-style: normal;
+    }
+    .completed-toggle.open .chevron { transform: rotate(180deg); }
+
+    /* ── Empty state ────────────────────────────── */
+    .empty {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--muted);
+    }
+    .empty .icon { font-size: 40px; margin-bottom: 12px; }
+    .empty p { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .empty small { font-size: 13px; }
+
+    /* ── Modal ──────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0,0,0,.2);
+    }
+
+    .modal-header {
+      padding: 20px 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: var(--muted);
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-body { padding: 20px 24px 24px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .form-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+
+    .modal-footer {
+      padding: 0 24px 24px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+
+    /* ── Loading ────────────────────────────────── */
+    .spinner {
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin .6s linear infinite;
+      margin: 60px auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .market-grid { grid-template-columns: repeat(3, 1fr); }
+      .toolbar { gap: 8px; }
+      .header-inner { padding: 0 16px; }
+      .project-list { padding: 0 16px; }
+      .toolbar { padding: 0 16px; }
+      .stats-bar { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ─────────────────────────────────────── -->
+<div id="login-view">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="icon">&#9733;</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;">ITSEE Projects</div>
+        <div style="font-size:12px;color:var(--muted);">QC &amp; Brand Ads Portal</div>
+      </div>
+    </div>
+    <h2>Welcome back</h2>
+    <p class="subtitle">Sign in with your name and the team password.</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="login-name">Your name</label>
+        <input type="text" id="login-name" placeholder="e.g. Albi" autocomplete="name" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Team password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <div class="error-msg" id="login-error"></div>
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px;">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<!-- ── App ───────────────────────────────────────── -->
+<div id="app-view">
+  <header>
+    <div class="header-inner">
+      <div class="header-logo">
+        <div class="dot">&#9733;</div>
+        ITSEE Projects <span>QC &amp; Brand Ads</span>
+      </div>
+      <div class="user-chip">
+        <div class="avatar" id="user-avatar">A</div>
+        <span id="user-name-display">User</span>
+      </div>
+      <button class="btn-logout" id="logout-btn" title="Sign out">Sign out</button>
+      <button class="btn btn-primary" id="open-modal-btn">+ New Project</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="search-input" placeholder="Search projects…">
+    </div>
+    <select class="filter-select" id="filter-status">
+      <option value="">All statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="Assigned">Assigned</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Completed">Completed</option>
+    </select>
+    <select class="filter-select" id="filter-effort">
+      <option value="">All efforts</option>
+      <option value="Low">Low effort</option>
+      <option value="Mid">Mid effort</option>
+      <option value="High">High effort</option>
+    </select>
+    <select class="filter-select" id="sort-select">
+      <option value="votes">Most voted</option>
+      <option value="newest">Newest first</option>
+      <option value="name">Name A–Z</option>
+    </select>
+  </div>
+
+  <div class="stats-bar" id="stats-bar"></div>
+
+  <div class="project-list" id="project-list">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<!-- ── New Project Modal ─────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Submit a project request</h2>
+      <button class="modal-close" id="close-modal-btn">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <form id="project-form">
+        <div class="form-group">
+          <label for="f-name">Project name <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="f-name" placeholder="Short, descriptive name" required>
+        </div>
+        <div class="form-group">
+          <label for="f-desc">Description</label>
+          <textarea id="f-desc" placeholder="What does this project do and why does it matter?"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-requested-by">Requested by</label>
+            <input type="text" id="f-requested-by" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label for="f-owner">Owner / Lead</label>
+            <input type="text" id="f-owner" placeholder="Who will own this?">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-status">Status</label>
+            <select id="f-status">
+              <option value="Pending">Pending</option>
+              <option value="Assigned">Assigned</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-effort">Effort estimate</label>
+            <select id="f-effort">
+              <option value="">— select —</option>
+              <option value="Low">Low (&lt;3 days)</option>
+              <option value="Mid">Mid (1–2 weeks)</option>
+              <option value="High">High (1+ month)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-eta">ETA</label>
+            <input type="text" id="f-eta" placeholder="e.g. Q3 2026">
+          </div>
+          <div class="form-group">
+            <label for="f-brief">Link to brief</label>
+            <input type="url" id="f-brief" placeholder="https://…">
+          </div>
+        </div>
+
+        <div class="error-msg" id="form-error"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancel-modal-btn">Cancel</button>
+      <button class="btn btn-primary" id="submit-project-btn">Submit project</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  let projects = [];
+  let currentUser = null;
+
+  // ── Auth check on load ──────────────────────────
+  async function init() {
+    const res = await fetch('/api/me');
+    const data = await res.json();
+    if (data.authenticated) {
+      currentUser = data.userName;
+      showApp();
+      loadProjects();
+    } else {
+      showLogin();
+    }
+  }
+
+  function showLogin() {
+    $('login-view').style.display = 'flex';
+    $('app-view').style.display = 'none';
+  }
+
+  function showApp() {
+    $('login-view').style.display = 'none';
+    $('app-view').style.display = 'block';
+    const initials = (currentUser || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    $('user-avatar').textContent = initials;
+    $('user-name-display').textContent = currentUser;
+    $('f-requested-by').value = currentUser || '';
+  }
+
+  // ── Login ───────────────────────────────────────
+  $('login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = $('login-name').value.trim();
+    const password = $('login-password').value;
+    const errEl = $('login-error');
+    errEl.style.display = 'none';
+
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        currentUser = data.userName;
+        showApp();
+        loadProjects();
+      } else {
+        errEl.textContent = data.error || 'Login failed';
+        errEl.style.display = 'block';
+      }
+    } catch {
+      errEl.textContent = 'Connection error. Is the server running?';
+      errEl.style.display = 'block';
+    }
+
+    btn.textContent = 'Sign in';
+    btn.disabled = false;
+  });
+
+  // ── Logout ──────────────────────────────────────
+  $('logout-btn').addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    currentUser = null;
+    projects = [];
+    showLogin();
+  });
+
+  // ── Load projects ───────────────────────────────
+  async function loadProjects() {
+    try {
+      const res = await fetch('/api/projects');
+      if (res.status === 401) { showLogin(); return; }
+      projects = await res.json();
+      render();
+    } catch {
+      $('project-list').innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px">Failed to load projects.</p>';
+    }
+  }
+
+  // ── Render ──────────────────────────────────────
+  let completedOpen = false;
+
+  function render() {
+    const query = $('search-input').value.toLowerCase();
+    const statusFilter = $('filter-status').value;
+    const effortFilter = $('filter-effort').value;
+    const sort = $('sort-select').value;
+
+    const matches = p => {
+      const matchSearch = !query ||
+        p.name.toLowerCase().includes(query) ||
+        (p.description || '').toLowerCase().includes(query) ||
+        (p.requested_by || '').toLowerCase().includes(query);
+      const matchEffort = !effortFilter || p.effort === effortFilter;
+      return matchSearch && matchEffort;
+    };
+
+    const sortFn = (a, b) => {
+      if (sort === 'votes') return b.vote_count - a.vote_count || a.id - b.id;
+      if (sort === 'newest') return b.id - a.id;
+      return a.name.localeCompare(b.name);
+    };
+
+    // When status filter is explicitly "Completed", show only completed (no split)
+    const forceCompleted = statusFilter === 'Completed';
+
+    let active = [], completed = [];
+    projects.filter(matches).forEach(p => {
+      const s = p.status || 'Pending';
+      if (!forceCompleted && statusFilter && s !== statusFilter) return;
+      if (!forceCompleted && s === 'Completed') completed.push(p);
+      else active.push(p);
+    });
+
+    active.sort(sortFn);
+    completed.sort(sortFn);
+
+    const total = active.length + completed.length;
+    $('stats-bar').textContent = `${total} of ${projects.length} projects`;
+
+    const container = $('project-list');
+
+    if (!total) {
+      container.innerHTML = `
+        <div class="empty">
+          <div class="icon">&#128269;</div>
+          <p>No projects found</p>
+          <small>Try adjusting your search or filters</small>
+        </div>`;
+      return;
+    }
+
+    let html = active.map(p => cardHTML(p)).join('');
+
+    if (completed.length) {
+      html += `
+        <button class="completed-toggle ${completedOpen ? 'open' : ''}" id="completed-toggle">
+          <span>&#10003; Completed (${completed.length})</span>
+          <i class="chevron">&#9660;</i>
+        </button>
+        <div id="completed-section" style="display:${completedOpen ? 'flex' : 'none'};flex-direction:column;gap:10px;">
+          ${completed.map(p => cardHTML(p)).join('')}
+        </div>`;
+    }
+
+    container.innerHTML = html;
+
+    // Toggle completed section
+    const toggleBtn = $('completed-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        completedOpen = !completedOpen;
+        toggleBtn.classList.toggle('open', completedOpen);
+        $('completed-section').style.display = completedOpen ? 'flex' : 'none';
+      });
+    }
+
+    // Attach vote + edit listeners
+    [...active, ...completed].forEach(p => {
+      const voteBtn = document.querySelector(`.vote-btn[data-id="${p.id}"]`);
+      if (voteBtn) voteBtn.addEventListener('click', () => vote(p.id));
+      const editBtn = document.querySelector(`.edit-btn[data-id="${p.id}"]`);
+      if (editBtn) editBtn.addEventListener('click', () => openEditModal(p));
+    });
+  }
+
+  function cardHTML(p) {
+    const status = p.status || 'Pending';
+    const statusClass = `badge-status-${status.replace(' ','\ ')}`;
+    const voters = p.voters || [];
+    const voterChips = voters.map(v =>
+      `<span class="voter-chip">${escHtml(v)}</span>`
+    ).join('');
+
+    return `
+      <div class="project-card">
+        <div class="vote-wrap">
+          <button class="vote-btn ${p.user_voted ? 'voted' : ''}" data-id="${p.id}" title="Upvote">
+            <span class="arrow">&#9650;</span>
+            <span class="count">${p.vote_count}</span>
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <div class="project-name">${escHtml(p.name)}</div>
+            <span class="badge ${statusClass}">${status}</span>
+            ${p.effort ? `<span class="badge badge-effort-${p.effort}">${p.effort} effort</span>` : ''}
+            <button class="btn-edit edit-btn" data-id="${p.id}" title="Edit project">&#9998;</button>
+          </div>
+          ${p.description ? `<div class="project-desc">${escHtml(p.description)}</div>` : ''}
+          <div class="card-meta">
+            ${p.requested_by ? `<span class="meta-item">Requested by <strong>${escHtml(p.requested_by)}</strong></span>` : ''}
+            ${p.owner ? `<span class="meta-item">Owner <strong>${escHtml(p.owner)}</strong></span>` : ''}
+            ${p.eta ? `<span class="meta-item">ETA <strong>${escHtml(p.eta)}</strong></span>` : ''}
+            ${p.link_to_brief ? `<a href="${escHtml(p.link_to_brief)}" target="_blank" class="link-brief">&#128279; Brief</a>` : ''}
+            ${voterChips ? `<div style="display:flex;gap:4px;flex-wrap:wrap;">${voterChips}</div>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Vote ────────────────────────────────────────
+  async function vote(id) {
+    const res = await fetch(`/api/projects/${id}/vote`, { method: 'POST' });
+    if (res.status === 401) { showLogin(); return; }
+    const data = await res.json();
+
+    const p = projects.find(x => x.id === id);
+    if (p) {
+      p.vote_count = data.vote_count;
+      p.user_voted = data.voted ? 1 : 0;
+      p.voters = data.voters;
+    }
+
+    // Re-sort and re-render only if sort is by votes
+    if ($('sort-select').value === 'votes') {
+      projects.sort((a,b) => b.vote_count - a.vote_count || a.id - b.id);
+    }
+    render();
+  }
+
+  // ── Filters & search ────────────────────────────
+  $('search-input').addEventListener('input', render);
+  $('filter-status').addEventListener('change', render);
+  $('filter-effort').addEventListener('change', render);
+  $('sort-select').addEventListener('change', render);
+
+  // ── Modal ───────────────────────────────────────
+  let editingId = null;
+
+  $('open-modal-btn').addEventListener('click', () => openModal());
+  $('close-modal-btn').addEventListener('click', closeModal);
+  $('cancel-modal-btn').addEventListener('click', closeModal);
+  $('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
+
+  function openModal() {
+    editingId = null;
+    $('project-form').reset();
+    $('f-requested-by').value = currentUser || '';
+    $('modal-overlay').querySelector('h2').textContent = 'Submit a project request';
+    $('submit-project-btn').textContent = 'Submit project';
+    $('form-error').style.display = 'none';
+    $('modal-overlay').classList.add('open');
+    $('f-name').focus();
+  }
+
+  function openEditModal(p) {
+    editingId = p.id;
+    $('f-name').value = p.name || '';
+    $('f-desc').value = p.description || '';
+    $('f-requested-by').value = p.requested_by || '';
+    $('f-owner').value = p.owner || '';
+    $('f-status').value = p.status || 'Pending';
+    $('f-effort').value = p.effort || '';
+    $('f-eta').value = p.eta || '';
+    $('f-brief').value = p.link_to_brief || '';
+    $('modal-overlay').querySelector('h2').textContent = 'Edit project';
+    $('submit-project-btn').textContent = 'Save changes';
+    $('form-error').style.display = 'none';
+    $('modal-overlay').classList.add('open');
+    $('f-name').focus();
+  }
+
+  function closeModal() {
+    $('modal-overlay').classList.remove('open');
+    editingId = null;
+  }
+
+  $('submit-project-btn').addEventListener('click', async () => {
+    const errEl = $('form-error');
+    errEl.style.display = 'none';
+
+    const name = $('f-name').value.trim();
+    if (!name) {
+      errEl.textContent = 'Project name is required.';
+      errEl.style.display = 'block';
+      $('f-name').focus();
+      return;
+    }
+
+    const payload = {
+      name,
+      description: $('f-desc').value.trim() || null,
+      requested_by: $('f-requested-by').value.trim() || null,
+      owner: $('f-owner').value.trim() || null,
+      status: $('f-status').value,
+      effort: $('f-effort').value || null,
+      eta: $('f-eta').value.trim() || null,
+      link_to_brief: $('f-brief').value.trim() || null,
+    };
+
+    const btn = $('submit-project-btn');
+    btn.textContent = editingId ? 'Saving…' : 'Submitting…';
+    btn.disabled = true;
+
+    try {
+      const url = editingId ? `/api/projects/${editingId}` : '/api/projects';
+      const method = editingId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.status === 401) { closeModal(); showLogin(); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        if (editingId) {
+          const idx = projects.findIndex(p => p.id === editingId);
+          if (idx !== -1) projects[idx] = { ...projects[idx], ...data };
+        } else {
+          projects.unshift({ ...data, vote_count: 0, user_voted: 0, voters: [] });
+          $('sort-select').value = 'newest';
+        }
+        closeModal();
+        render();
+      } else {
+        errEl.textContent = data.error || `Server error (${res.status})`;
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Could not reach server — is it running?';
+      errEl.style.display = 'block';
+    }
+
+    btn.textContent = editingId ? 'Save changes' : 'Submit project';
+    btn.disabled = false;
+  });
+
+  // ── Keyboard shortcuts ──────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  init();
+</script>
+</body>
+</html>
