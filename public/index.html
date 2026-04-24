@@ -632,6 +632,7 @@
         <span id="user-name-display">User</span>
       </div>
       <button class="btn-logout" id="logout-btn" title="Sign out">Sign out</button>
+      <button class="btn btn-ghost" id="export-btn" title="Export to CSV">&#8595; CSV</button>
       <button class="btn btn-primary" id="open-modal-btn">+ New Project</button>
     </div>
   </header>
@@ -1091,6 +1092,21 @@
 
     btn.textContent = editingId ? 'Save changes' : 'Submit project';
     btn.disabled = false;
+  });
+
+  // ── Export CSV ──────────────────────────────────
+  $('export-btn').addEventListener('click', () => {
+    const cols = ['id','name','description','requested_by','owner','status','effort','eta','link_to_brief','vote_count','voters'];
+    const header = cols.join(',');
+    const rows = projects.map(p => cols.map(c => {
+      const val = c === 'voters' ? (p.voters || []).join('; ') : (p[c] ?? '');
+      return `"${String(val).replace(/"/g, '""')}"`;
+    }).join(','));
+    const csv = [header, ...rows].join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = `itsee-projects-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
   });
 
   // ── Keyboard shortcuts ──────────────────────────
