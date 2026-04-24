@@ -130,6 +130,13 @@
     }
     .btn-ghost:hover { background: var(--bg); color: var(--text); }
 
+    .btn-delete {
+      background: transparent;
+      color: var(--danger);
+      border: 1.5px solid #FCA5A5;
+    }
+    .btn-delete:hover { background: #FEF2F2; }
+
     .btn-full { width: 100%; padding: 12px; font-size: 15px; }
 
     .error-msg {
@@ -725,6 +732,7 @@
       </form>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-delete" id="delete-project-btn" style="display:none;margin-right:auto;">Delete project</button>
       <button class="btn btn-ghost" id="cancel-modal-btn">Cancel</button>
       <button class="btn btn-primary" id="submit-project-btn">Submit project</button>
     </div>
@@ -978,6 +986,16 @@
   $('open-modal-btn').addEventListener('click', () => openModal());
   $('close-modal-btn').addEventListener('click', closeModal);
   $('cancel-modal-btn').addEventListener('click', closeModal);
+
+  $('delete-project-btn').addEventListener('click', async () => {
+    if (!editingId) return;
+    if (!confirm('Delete this project? This cannot be undone.')) return;
+    const id = editingId;
+    closeModal();
+    await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+    projects = projects.filter(p => p.id !== id);
+    render();
+  });
   $('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
 
   function openModal() {
@@ -986,6 +1004,7 @@
     $('f-requested-by').value = currentUser || '';
     $('modal-overlay').querySelector('h2').textContent = 'Submit a project request';
     $('submit-project-btn').textContent = 'Submit project';
+    $('delete-project-btn').style.display = 'none';
     $('form-error').style.display = 'none';
     $('modal-overlay').classList.add('open');
     $('f-name').focus();
@@ -1003,6 +1022,7 @@
     $('f-brief').value = p.link_to_brief || '';
     $('modal-overlay').querySelector('h2').textContent = 'Edit project';
     $('submit-project-btn').textContent = 'Save changes';
+    $('delete-project-btn').style.display = 'inline-flex';
     $('form-error').style.display = 'none';
     $('modal-overlay').classList.add('open');
     $('f-name').focus();

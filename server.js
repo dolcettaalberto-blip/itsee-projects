@@ -197,6 +197,14 @@ app.put('/api/projects/:id', requireAuth, (req, res) => {
   }
 });
 
+app.delete('/api/projects/:id', requireAuth, (req, res) => {
+  const id = parseInt(req.params.id);
+  if (!id) return res.status(400).json({ error: 'Invalid project id' });
+  db.prepare('DELETE FROM votes WHERE project_id = ?').run(id);
+  db.prepare('DELETE FROM projects WHERE id = ?').run(id);
+  res.json({ success: true });
+});
+
 app.post('/api/projects/:id/vote', requireAuth, (req, res) => {
   const id = parseInt(req.params.id);
   if (!id) return res.status(400).json({ error: 'Invalid project id' });
