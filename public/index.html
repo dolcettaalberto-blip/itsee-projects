@@ -394,6 +394,8 @@
     .badge-effort-Low  { background: #DCFCE7; color: #166534; }
     .badge-effort-Mid  { background: #FEF3C7; color: #92400E; }
     .badge-effort-High { background: #FEE2E2; color: #991B1B; }
+    .badge-brief { background: #F0FDF4; color: #166534; text-decoration: none; }
+    .badge-brief:hover { background: #DCFCE7; }
 
     .project-desc {
       color: var(--muted);
@@ -966,6 +968,7 @@
             <div class="project-name">${escHtml(p.name)}</div>
             <span class="badge ${statusClass}">${status}</span>
             ${p.effort ? `<span class="badge badge-effort-${p.effort}">${p.effort} effort</span>` : ''}
+            ${p.link_to_brief ? `<a href="${escHtml(p.link_to_brief)}" target="_blank" class="badge badge-brief" title="View brief">&#128196; Brief</a>` : ''}
             <button class="btn-edit edit-btn" data-id="${p.id}" title="Edit project">&#9998;</button>
           </div>
           ${p.description ? `<div class="project-desc">${escHtml(p.description)}</div>` : ''}
@@ -974,7 +977,6 @@
             ${p.owner ? `<span class="meta-item">Owner <strong>${escHtml(p.owner)}</strong></span>` : ''}
             ${p.eta ? `<span class="meta-item">ETA <strong>${escHtml(p.eta)}</strong></span>` : ''}
             ${p.created_at ? `<span class="meta-item">Submitted <strong>${fmtDate(p.created_at)}</strong></span>` : ''}
-            ${p.link_to_brief ? `<a href="${escHtml(p.link_to_brief)}" target="_blank" class="link-brief">&#128279; Brief</a>` : ''}
             ${voterChips ? `<div style="display:flex;gap:4px;flex-wrap:wrap;">${voterChips}</div>` : ''}
           </div>
         </div>
