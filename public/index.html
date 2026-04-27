@@ -880,8 +880,8 @@
   let activeTab = 'backlog';
 
   const TAB_FILTER = {
-    backlog:     p => { const s = p.status || 'Pending'; return s === 'Pending'; },
-    development: p => { const s = p.status || 'Pending'; return s === 'Assigned' || s === 'In Progress'; },
+    backlog:     p => { const s = p.status || 'Pending'; return s === 'Pending' || s === 'Assigned'; },
+    development: p => (p.status || '') === 'In Progress',
     completed:   p => (p.status || '') === 'Completed',
   };
 
