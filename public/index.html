@@ -565,6 +565,55 @@
     }
 
 
+    /* ── Tabs ───────────────────────────────────── */
+    .tabs-bar {
+      max-width: 960px;
+      margin: 20px auto 0;
+      padding: 0 24px;
+      display: flex;
+      gap: 2px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .tab {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      padding: 10px 18px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: color .15s;
+      white-space: nowrap;
+    }
+
+    .tab:hover { color: var(--text); }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-count {
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--bg);
+      color: var(--muted);
+    }
+
+    .tab.active .tab-count {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
     /* ── Loading ────────────────────────────────── */
     .spinner {
       border: 3px solid var(--border);
@@ -644,13 +693,6 @@
       </svg>
       <input type="text" id="search-input" placeholder="Search projects…">
     </div>
-    <select class="filter-select" id="filter-status">
-      <option value="">All statuses</option>
-      <option value="Pending">Pending</option>
-      <option value="Assigned">Assigned</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Completed">Completed</option>
-    </select>
     <select class="filter-select" id="filter-effort">
       <option value="">All efforts</option>
       <option value="Low">Low effort</option>
@@ -664,6 +706,11 @@
     </select>
   </div>
 
+  <div class="tabs-bar" id="tabs-bar">
+    <button class="tab active" data-tab="backlog">Backlog <span class="tab-count" id="count-backlog">0</span></button>
+    <button class="tab" data-tab="development">In Development <span class="tab-count" id="count-development">0</span></button>
+    <button class="tab" data-tab="completed">Completed <span class="tab-count" id="count-completed">0</span></button>
+  </div>
   <div class="stats-bar" id="stats-bar"></div>
 
   <div class="project-list" id="project-list">
@@ -830,22 +877,26 @@
   }
 
   // ── Render ──────────────────────────────────────
-  let completedOpen = false;
+  let activeTab = 'backlog';
+
+  const TAB_FILTER = {
+    backlog:     p => { const s = p.status || 'Pending'; return s === 'Pending'; },
+    development: p => { const s = p.status || 'Pending'; return s === 'Assigned' || s === 'In Progress'; },
+    completed:   p => (p.status || '') === 'Completed',
+  };
 
   function render() {
     const query = $('search-input').value.toLowerCase();
-    const statusFilter = $('filter-status').value;
     const effortFilter = $('filter-effort').value;
     const sort = $('sort-select').value;
 
-    const matches = p => {
-      const matchSearch = !query ||
-        p.name.toLowerCase().includes(query) ||
-        (p.description || '').toLowerCase().includes(query) ||
-        (p.requested_by || '').toLowerCase().includes(query);
-      const matchEffort = !effortFilter || p.effort === effortFilter;
-      return matchSearch && matchEffort;
-    };
+    const matchesSearch = p =>
+      !query ||
+      p.name.toLowerCase().includes(query) ||
+      (p.description || '').toLowerCase().includes(query) ||
+      (p.requested_by || '').toLowerCase().includes(query);
+
+    const matchesEffort = p => !effortFilter || p.effort === effortFilter;
 
     const sortFn = (a, b) => {
       if (sort === 'votes') return b.vote_count - a.vote_count || a.id - b.id;
@@ -853,26 +904,22 @@
       return a.name.localeCompare(b.name);
     };
 
-    // When status filter is explicitly "Completed", show only completed (no split)
-    const forceCompleted = statusFilter === 'Completed';
-
-    let active = [], completed = [];
-    projects.filter(matches).forEach(p => {
-      const s = p.status || 'Pending';
-      if (!forceCompleted && statusFilter && s !== statusFilter) return;
-      if (!forceCompleted && s === 'Completed') completed.push(p);
-      else active.push(p);
+    // Update tab counts (unfiltered by search/effort)
+    Object.keys(TAB_FILTER).forEach(tab => {
+      $(`count-${tab}`).textContent = projects.filter(TAB_FILTER[tab]).length;
     });
 
-    active.sort(sortFn);
-    completed.sort(sortFn);
+    const list = projects
+      .filter(TAB_FILTER[activeTab])
+      .filter(matchesSearch)
+      .filter(matchesEffort)
+      .sort(sortFn);
 
-    const total = active.length + completed.length;
-    $('stats-bar').textContent = `${total} of ${projects.length} projects`;
+    $('stats-bar').textContent = `${list.length} project${list.length !== 1 ? 's' : ''}`;
 
     const container = $('project-list');
 
-    if (!total) {
+    if (!list.length) {
       container.innerHTML = `
         <div class="empty">
           <div class="icon">&#128269;</div>
@@ -882,38 +929,20 @@
       return;
     }
 
-    let html = active.map(p => cardHTML(p)).join('');
+    container.innerHTML = list.map(p => cardHTML(p)).join('');
 
-    if (completed.length) {
-      html += `
-        <button class="completed-toggle ${completedOpen ? 'open' : ''}" id="completed-toggle">
-          <span>&#10003; Completed (${completed.length})</span>
-          <i class="chevron">&#9660;</i>
-        </button>
-        <div id="completed-section" style="display:${completedOpen ? 'flex' : 'none'};flex-direction:column;gap:10px;">
-          ${completed.map(p => cardHTML(p)).join('')}
-        </div>`;
-    }
-
-    container.innerHTML = html;
-
-    // Toggle completed section
-    const toggleBtn = $('completed-toggle');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        completedOpen = !completedOpen;
-        toggleBtn.classList.toggle('open', completedOpen);
-        $('completed-section').style.display = completedOpen ? 'flex' : 'none';
-      });
-    }
-
-    // Attach vote + edit listeners
-    [...active, ...completed].forEach(p => {
+    list.forEach(p => {
       const voteBtn = document.querySelector(`.vote-btn[data-id="${p.id}"]`);
       if (voteBtn) voteBtn.addEventListener('click', () => vote(p.id));
       const editBtn = document.querySelector(`.edit-btn[data-id="${p.id}"]`);
       if (editBtn) editBtn.addEventListener('click', () => openEditModal(p));
     });
+  }
+
+  function fmtDate(raw) {
+    if (!raw) return '';
+    const d = new Date(raw.replace(' ', 'T'));
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
   function cardHTML(p) {
@@ -944,6 +973,7 @@
             ${p.requested_by ? `<span class="meta-item">Requested by <strong>${escHtml(p.requested_by)}</strong></span>` : ''}
             ${p.owner ? `<span class="meta-item">Owner <strong>${escHtml(p.owner)}</strong></span>` : ''}
             ${p.eta ? `<span class="meta-item">ETA <strong>${escHtml(p.eta)}</strong></span>` : ''}
+            ${p.created_at ? `<span class="meta-item">Submitted <strong>${fmtDate(p.created_at)}</strong></span>` : ''}
             ${p.link_to_brief ? `<a href="${escHtml(p.link_to_brief)}" target="_blank" class="link-brief">&#128279; Brief</a>` : ''}
             ${voterChips ? `<div style="display:flex;gap:4px;flex-wrap:wrap;">${voterChips}</div>` : ''}
           </div>
@@ -977,9 +1007,17 @@
 
   // ── Filters & search ────────────────────────────
   $('search-input').addEventListener('input', render);
-  $('filter-status').addEventListener('change', render);
   $('filter-effort').addEventListener('change', render);
   $('sort-select').addEventListener('change', render);
+
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
 
   // ── Modal ───────────────────────────────────────
   let editingId = null;
